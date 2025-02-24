@@ -3,6 +3,7 @@
 #import "@preview/mitex:0.2.5": *
 #import "@preview/cmarker:0.1.2": render as cmarker-render
 #import "@preview/theorion:0.3.0": *
+#import "@preview/zebraw:0.4.3": *
 #import cosmos.fancy: *
 #let md = cmarker-render.with(math: mitex)
 
@@ -10,7 +11,7 @@
   main: "IBM Plex Sans",
   mono: "IBM Plex Mono",
   cjk: "Noto Serif SC",
-  emph-cjk: "KaiTi",
+  emph-cjk: "Kai",
   math: "New Computer Modern Math",
   math-cjk: "Noto Serif SC",
 )
@@ -44,7 +45,9 @@
   screen-size: 11pt,
   title: none,
   author: none,
+  id: none,
   subject: none,
+  teacher: none,
   semester: none,
   date: none,
   font: default-font,
@@ -109,17 +112,8 @@
       body
     },
   )
-  show raw.where(block: true): body => block(
-    width: 100%,
-    fill: raw-color,
-    outset: (x: 0pt, y: 4pt),
-    inset: (x: 8pt, y: 4pt),
-    radius: 4pt,
-    {
-      set par(justify: false)
-      body
-    },
-  )
+  show raw.where(block: true): zebraw
+  show raw.where(block: true): it => v(-1em) + it
 
   /// 设置链接样式。
   show link: it => {
@@ -145,36 +139,15 @@
   /// 基础设置。
   set document(title: title, author: if type(author) == str { author } else { () }, date: date)
 
-  /// 标题页。
-  if maketitle {
-    // Title page
-    align(center + top)[
-      #v(20%)
-      #text(2em, weight: 500, subject)
-      #v(2em, weak: true)
-      #text(2em, weight: 500, title)
-      #v(2em, weak: true)
-      #author
-    ]
-    pagebreak(weak: true)
-  }
-
-  /// 目录。
-  if makeoutline {
-    show heading: align.with(center)
-    show outline.entry: set block(spacing: 1.2em)
-
-    outline(depth: outline-depth, indent: 2em)
-    pagebreak(weak: true)
-  }
-
   /// 重置页面计数器。
   counter(page).update(1)
 
   /// 设置页面。
   set page(
     paper: "a4",
-    header: {
+    header: context if here().page() == 1 and maketitle {
+      none
+    } else {
       set text(0.9em)
       stack(
         spacing: 0.2em,
@@ -182,10 +155,8 @@
           columns: (1fr, auto, 1fr),
           align(left, semester), align(center, subject), align(right, title),
         ),
-        v(0.3em),
+        v(0.5em),
         line(length: 100%, stroke: 1pt + text-color),
-        v(.15em),
-        line(length: 100%, stroke: .5pt + text-color),
       )
       // reset footnote counter
       counter(footnote).update(0)
@@ -194,6 +165,27 @@
     numbering: "1",
     margin: page-margin,
   )
+
+  /// 标题页。
+  if maketitle {
+    // Title page
+    block[
+      #line(length: 100%)
+      #text(1.5em, weight: 600, subject + " | " + title)\
+
+      #id #author | #semester #h(1fr) #teacher #if teacher != none{[|]} #date.display("[year]年[month]月[day]日")
+      #line(length: 100%)
+    ]
+  }
+
+  /// 目录。
+  if makeoutline {
+    // show heading: align.with(center)
+    show outline.entry: set block(spacing: 1em)
+
+    outline(depth: outline-depth, indent: 2em)
+    // pagebreak(weak: true)
+  }
 
   /// 设置定理环境。
   show: show-theorion

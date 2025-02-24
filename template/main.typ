@@ -1,4 +1,4 @@
-#import "@preview/ori:0.2.0": *
+#import "/lib.typ": *
 
 #set heading(numbering: numbly("{1:一}、", default: "1.1  "))
 
@@ -8,8 +8,8 @@
   subject: "Ori in Typst",
   semester: "2025 春",
   date: datetime.today(),
-  // maketitle: true,
-  // makeoutline: true,
+  maketitle: true,
+  makeoutline: true,
   // theme: "dark",
   // media: "screen",
 )
