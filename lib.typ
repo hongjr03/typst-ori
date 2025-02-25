@@ -26,8 +26,8 @@
 /// 模板的核心类，规范了文档的格式。
 /// - media (string): 媒体类型，可选值为 `"screen"` 和 `"print"`。默认为 `"print"`。
 /// - theme (string): 主题，可选值为 `"light"` 和 `"dark"`。默认为 `"light"`。
-/// - size (length): 字体大小。默认为 `11pt`。
-/// - screen-size (length): 屏幕字体大小。默认为 `11pt`。
+/// - size (length): 字体大小。默认为 `10.5pt`。
+/// - screen-size (length): 屏幕字体大小。默认为 `10.5pt`。
 /// - title (string): 文档的标题。
 /// - author (string): 作者。
 /// - subject (string): 课程名。
@@ -41,8 +41,8 @@
 #let ori(
   media: "print",
   theme: "light",
-  size: 11pt,
-  screen-size: 11pt,
+  size: 10.5pt,
+  screen-size: 10.5pt,
   title: none,
   author: none,
   id: none,
@@ -84,16 +84,6 @@
     it
   }
 
-  /// 设置段落样式。
-  set par(
-    justify: true,
-    first-line-indent: if first-line-indent == auto {
-      (amount: 2em, all: true)
-    } else {
-      first-line-indent
-    },
-  )
-
   /// 设置标题样式。
   show heading: it => {
     show h.where(amount: 0.3em): none
@@ -129,8 +119,16 @@
   show figure.where(kind: table): set figure.caption(position: top)
 
   /// 设置列表样式。
-  set list(indent: 6pt)
-  set enum(indent: 6pt)
+  set list(indent: 2em)
+  show list: it => {
+    set list(indent: 6pt)
+    it
+  }
+  set enum(indent: 2em)
+  show enum: it => {
+    set enum(indent: 6pt)
+    it
+  }
   set enum(numbering: numbly("{1:1}.", "{2:1})", "{3:a}."), full: true)
 
   /// 设置引用样式。
@@ -186,6 +184,16 @@
     outline(depth: outline-depth, indent: 2em)
     // pagebreak(weak: true)
   }
+
+  /// 设置段落样式。
+  set par(
+    justify: true,
+    first-line-indent: if first-line-indent == auto {
+      (amount: 2em, all: true)
+    } else {
+      first-line-indent
+    },
+  )
 
   /// 设置定理环境。
   show: show-theorion
